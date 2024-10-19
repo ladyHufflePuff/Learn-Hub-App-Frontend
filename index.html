@@ -13,12 +13,13 @@
     <div id="app"  style="background-color: brown">
         <div style="background-color: red; padding: 20px; text-align: center; color: white;">
             <h1>App header</h1>
-            <button class="btn btn-light">
+            <button class="btn btn-light" v-on:click="showCheckout" :disabled="itemInCart === ''">
+                {{itemInCart}}
                 <span class="fa fa-shopping-cart"></span>Shopping Cart
             </button>
         </div>
         
-        <div class="d-flex">
+        <div class="d-flex" v-if="showLesson">
             <div >
                 <i class="fa fa-sort "style="font-size: 30px;" aria-hidden="true"@click="toggleSidebar"></i>
                 <div v-show="showSidebar" style="background-color: aquamarine; transition: 0.5s ease;">
@@ -68,11 +69,14 @@
                             <p>Location: {{lesson.location}}</p>
                             <p>Price: {{lesson.price}}</p>
                             <p>Spaces: {{lesson.space}}</p>
-                            <button class="btn btn-danger">Add to Cart</button>
+                            <button v-on:click="addToCart(lesson)" :disabled="lesson.space === 0"  class="btn btn-danger">Add to Cart</button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div v-else>
         </div>    
     </div>
    

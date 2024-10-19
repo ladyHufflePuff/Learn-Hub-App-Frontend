@@ -5,15 +5,24 @@ let app = new Vue({
         showSidebar: false,
         selectedSort: [],
         order: 'ascending',
-        cart:[]
-      
+        cart:[],
+        showLesson: true  
     },
     methods:{
         toggleSidebar(){
             this.showSidebar = !this.showSidebar; 
         },
         handleSort(attribute){
-            this.selectedSort = [attribute]
+            this.selectedSort = [attribute];
+        },
+        addToCart(lesson){
+            if(lesson.space > 0){
+                this.cart.push(lesson.id)
+                lesson.space--;
+            }
+        },
+        showCheckout(){
+            this.showLesson = !this.showLesson;  
         }
     },
     computed:{
@@ -27,6 +36,9 @@ let app = new Vue({
                 if (a[this.selectedSort[0]] > b[this.selectedSort[0]]) return 1 * modifier;
                 return 0;
             })
+        },
+        itemInCart(){
+            return this.cart.length ||"";
         }
     }
 
