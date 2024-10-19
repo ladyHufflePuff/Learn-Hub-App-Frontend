@@ -77,6 +77,32 @@
         </div>
 
         <div v-else>
+            <div>
+                <h1>Shopping Cart</h1>
+                <div v-if="cartLessons.length > 0" class="container my-4"  style="background-color: blue">
+                    <div class="row   row-cols-md-4">
+                        <div class="col" v-for="lesson in cartLessons" style="background-color: pink" >
+                            <div class="lesson" 
+                        style="background-color: green; color: white; border-radius: 10px; padding: 20px; margin: 10px;">
+                                <figure>
+                                    <img v-bind:src="lesson.image" width="200" height="200" alt="Lesson Image">
+                                </figure>
+                                <h2 v-text="lesson.subject"></h2>
+                                <p>Location: {{lesson.location}}</p>
+                                <p>Price: {{lesson.price}}</p>
+                                <p>Quantity: 0</p>
+                                <button v-on:click="removeFromCart(lesson)" class="btn btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-else>
+                    <p>Shopping Cart is Empty</p>
+                </div>
+            </div>
+            <div>
+                <h1>Checkout</h1>
+            </div>
         </div>    
     </div>
    

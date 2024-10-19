@@ -39,6 +39,9 @@ let app = new Vue({
         },
         itemInCart(){
             return this.cart.length ||"";
+        },
+        cartLessons(){
+            return this.lessons.filter(lesson => this.cart.includes(lesson.id))
         }
     }
 
