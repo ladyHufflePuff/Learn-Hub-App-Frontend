@@ -30,6 +30,16 @@ let app = new Vue({
         cartQuantity(lessonId){
             let cartItem = this.cart.find(item => item.id === lessonId);
             return cartItem ? cartItem.quantity : 0;
+        },
+        removeFromCart(lesson){
+            let cartItem = this.cart.find(item => item.id === lesson.id);
+            if (cartItem) {
+                cartItem.quantity -= 1; 
+                lesson.space++; 
+                if (cartItem.quantity === 0) {
+                    this.cart = this.cart.filter(item => item.id !== lesson.id);
+                }
+            }
         }
     },
     computed:{
