@@ -16,13 +16,20 @@ let app = new Vue({
             this.selectedSort = [attribute];
         },
         addToCart(lesson){
-            if(lesson.space > 0){
-                this.cart.push(lesson.id)
-                lesson.space--;
+            let cartItem = this.cart.find(item => item.id === lesson.id);
+            if(cartItem){
+                cartItem.quantity += 1;
+            }else{
+                this.cart.push({id: lesson.id, quantity: 1});
             }
+            lesson.space--;
         },
         showCheckout(){
             this.showLesson = !this.showLesson;  
+        },
+        cartQuantity(lessonId){
+            let cartItem = this.cart.find(item => item.id === lessonId);
+            return cartItem ? cartItem.quantity : 0;
         }
     },
     computed:{
@@ -38,10 +45,10 @@ let app = new Vue({
             })
         },
         itemInCart(){
-            return this.cart.length ||"";
+            return this.cart.reduce((total, item) => total + item.quantity, 0);
         },
         cartLessons(){
-            return this.lessons.filter(lesson => this.cart.includes(lesson.id))
+            return this.lessons.filter(lesson => this.cart.some(item => item.id === lesson.id));
         }
     }
 

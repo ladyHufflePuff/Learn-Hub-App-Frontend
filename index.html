@@ -90,7 +90,7 @@
                                 <h2 v-text="lesson.subject"></h2>
                                 <p>Location: {{lesson.location}}</p>
                                 <p>Price: {{lesson.price}}</p>
-                                <p>Quantity: 0</p>
+                                <p>Quantity: {{cartQuantity(lesson.id)}}</p>
                                 <button v-on:click="removeFromCart(lesson)" class="btn btn-danger">Remove</button>
                             </div>
                         </div>
