@@ -6,7 +6,12 @@ let app = new Vue({
         selectedSort: [],
         order: 'ascending',
         cart:[],
-        showLesson: true  
+        showLesson: true,
+        name: '',
+        phone: '',
+        nameError: false,
+        phoneError: false,
+        modalShow: false
     },
     methods:{
         toggleSidebar(){
@@ -40,6 +45,30 @@ let app = new Vue({
                     this.cart = this.cart.filter(item => item.id !== lesson.id);
                 }
             }
+        },
+        validateName(){
+            const nameRegex = /^[a-zA-Z\s]*$/;
+            if (!nameRegex.test(this.name)) {
+              this.nameError = true;
+            } else {
+              this.nameError = false;
+            }
+        },
+        validatePhone(){
+            const phoneRegex = /^[0-9]*$/;
+            if (!phoneRegex.test(this.phone)) {
+              this.phoneError = true;
+            } else {
+              this.phoneError = false;
+            }  
+        },
+        confirmOrder(){
+            if (this.isFormValid) {
+                this.modalShow = true; 
+              }
+        },
+        dismiss(){
+            this.modalShow = false;
         }
     },
     computed:{
@@ -59,6 +88,9 @@ let app = new Vue({
         },
         cartLessons(){
             return this.lessons.filter(lesson => this.cart.some(item => item.id === lesson.id));
+        },
+        isFormValid(){
+            return !this.nameError && !this.phoneError && this.name !=='' && this.phone !== '';
         }
     }
 
