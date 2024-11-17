@@ -14,7 +14,7 @@
     <div id="app"  style="background-color: brown">
         <div style="background-color: red; padding: 20px; text-align: center; color: white;">
             <h1>App header</h1>
-            <button class="btn btn-light" v-on:click="showCheckout" :disabled="itemInCart === ''">
+            <button class="btn btn-light" v-on:click="showCheckout" :disabled="isShoppingCartDisabled">
                 {{itemInCart}}
                 <span class="fa fa-shopping-cart"></span>Shopping Cart
             </button>
@@ -48,8 +48,8 @@
                             </div>
                         </li>
                         <li>
-                            <input type="checkbox" id="spaces" v-model="selectedSort" value="spaces" @change="handleSort('spaces')"/>Spaces
-                            <div v-if="selectedSort.includes('spaces')">
+                            <input type="checkbox" id="space" v-model="selectedSort" value="space" @change="handleSort('space')"/>Space
+                            <div v-if="selectedSort.includes('space')">
                                 <label><input type="radio" v-model="order" value="ascending"> Ascending</label>
                                 <label><input type="radio" v-model="order" value="descending"> Descending</label>
                             </div>
@@ -101,7 +101,7 @@
                     <p>Shopping Cart is Empty</p>
                 </div>
             </div>
-            <div>
+            <div v-if="cartLessons.length > 0">
                 <h1>Checkout</h1>
                 <div class="d-flex">
                     <input placeholder="Name" v-model="name" @input="validateName"/>
@@ -127,7 +127,6 @@
             </div>
         </div>    
     </div>
-    <script src="lessons.js"></script>
     <script src="app.js"></script>
        
 </body>
