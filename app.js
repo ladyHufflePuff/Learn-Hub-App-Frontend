@@ -1,7 +1,7 @@
 let app = new Vue({
     el:'#app',
     data:{
-        lessons: lessons,
+        lessons: [],
         showSidebar: false,
         selectedSort: [],
         order: 'ascending',
@@ -12,6 +12,15 @@ let app = new Vue({
         nameError: false,
         phoneError: false,
         modalShow: false
+    },
+    created:function(){
+        fetch("http://localhost:8080/lessons").then( (res) =>{
+            res.json().then(
+                (res) =>{
+                    app.lessons = res;
+                }
+            )
+        })
     },
     methods:{
         toggleSidebar(){
@@ -69,6 +78,7 @@ let app = new Vue({
         },
         dismiss(){
             this.modalShow = false;
+            this.cart = [];    
         }
     },
     computed:{
@@ -91,6 +101,9 @@ let app = new Vue({
         },
         isFormValid(){
             return !this.nameError && !this.phoneError && this.name !=='' && this.phone !== '';
+        },
+        isShoppingCartDisabled() {
+            return this.showLesson && this.cartLessons.length === 0;
         }
     }
 
