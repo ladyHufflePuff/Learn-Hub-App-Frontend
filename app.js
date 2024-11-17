@@ -73,12 +73,32 @@ let app = new Vue({
         },
         confirmOrder(){
             if (this.isFormValid) {
-                this.modalShow = true; 
+                const order ={
+                    name: this.name,
+                    phone: this.phone,
+                    lessons: this.cart.map(item => ({ id: item.id, quantity: item.quantity })),
+                    orderDate: new Date().toISOString().slice(0, 10) 
+                };
+                fetch("http://localhost:8080/orders", {
+                    method: "POST", 
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(order)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Order submitted successfully");
+                        this.modalShow = true; 
+                    } else {
+                        console.error("Failed to submit order");
+                    }
+                });
               }
         },
         dismiss(){
             this.modalShow = false;
-            this.cart = [];    
+            this.cart = [];  
+            this.name = '';
+            this.phone = '';  
         }
     },
     computed:{
