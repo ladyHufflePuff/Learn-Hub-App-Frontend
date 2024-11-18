@@ -88,6 +88,25 @@ let app = new Vue({
                     if (response.ok) {
                         console.log("Order submitted successfully");
                         this.modalShow = true; 
+                        this.cart.forEach(cartItem => {
+                            const lesson = this.lessons.find(lesson => lesson.id === cartItem.id);
+                            if (lesson) {
+                                fetch(`http://localhost:8080/lessons/${lesson._id}`, {
+                                    method: "PUT",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ space: lesson.space })
+                                })
+                                .then(updateResponse => {
+                                    if (!updateResponse.ok) {
+                                        throw new Error(`Failed to update lesson space for ${lesson._id}`);
+                                    }
+                                    console.log(`Lesson space for ${lesson.name} updated successfully`);
+                                })
+                                .catch(error => {
+                                    console.error("Error updating lesson space:", error);
+                                });
+                            }
+                        });
                     } else {
                         console.error("Failed to submit order");
                     }
