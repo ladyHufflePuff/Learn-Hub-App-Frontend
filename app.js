@@ -76,7 +76,7 @@ let app = new Vue({
                 const order ={
                     name: this.name,
                     phone: this.phone,
-                    lessons: this.cart.map(item => ({ id: item.id, quantity: item.quantity })),
+                    lessons: this.cart.map(item => ({ id: item.id, space: item.quantity })),
                     orderDate: new Date().toISOString().slice(0, 10) 
                 };
                 fetch("http://localhost:8080/orders", {
