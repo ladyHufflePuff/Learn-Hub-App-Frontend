@@ -13,7 +13,8 @@
 <body>
     <div id="app"  style="background-color: brown">
         <div style="background-color: red; padding: 20px; text-align: center; color: white;">
-            <h1>App header</h1>
+            <h1>Learn Hub App</h1>
+            <input type="text" v-model="searchQuery" placeholder="Search lessons" @input="searchLessons" :disabled="!showLesson"/>
             <button class="btn btn-light" v-on:click="showCheckout" :disabled="isShoppingCartDisabled">
                 {{itemInCart}}
                 <span class="fa fa-shopping-cart"></span>Shopping Cart
@@ -22,8 +23,8 @@
         
         <div class="d-flex" v-if="showLesson">
             <div >
-                <i class="fa fa-sort "style="font-size: 30px;" aria-hidden="true"@click="toggleSidebar"></i>
-                <div v-show="showSidebar" style="background-color: aquamarine; transition: 0.5s ease;">
+                <i class="fa fa-sort "style="font-size: 30px;" aria-hidden="true"@click="toggleSidebar" ></i>
+                <div v-if="!searchQuery" v-show="showSidebar" style="background-color: aquamarine; transition: 0.5s ease;">
                     <h1>SORT</h1>
                     <ul style="list-style: none;">
                         <li>
@@ -59,7 +60,7 @@
             </div>
             
             <div class="container my-4"  style="background-color: blue">
-                <div class="row   row-cols-md-4">
+                <div v-if="!searchQuery" class="row   row-cols-md-4">
                     <div class="col" v-for="lesson in sortedLessons" style="background-color: pink" >
                         <div class="lesson" 
                     style="background-color: green; color: white; border-radius: 10px; padding: 20px; margin: 10px;">
@@ -68,7 +69,22 @@
                             </figure>
                             <h2 v-text="lesson.subject"></h2>
                             <p>Location: {{lesson.location}}</p>
-                            <p>Price: {{lesson.price}}</p>
+                            <p>Price: <b>￡</b>{{lesson.price}} </p>
+                            <p>Spaces: {{lesson.space}}</p>
+                            <button v-on:click="addToCart(lesson)" :disabled="lesson.space === 0"  class="btn btn-danger">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="searchQuery" class="row   row-cols-md-4">
+                    <div class="col" v-for="lesson in searchResults" style="background-color: pink" >
+                        <div class="lesson" 
+                    style="background-color: green; color: white; border-radius: 10px; padding: 20px; margin: 10px;">
+                            <figure>
+                                <img v-bind:src="lesson.image" width="200" height="200" alt="Lesson Image">
+                            </figure>
+                            <h2 v-text="lesson.subject"></h2>
+                            <p>Location: {{lesson.location}}</p>
+                            <p>Price: <b>￡</b>{{lesson.price}} </p>
                             <p>Spaces: {{lesson.space}}</p>
                             <button v-on:click="addToCart(lesson)" :disabled="lesson.space === 0"  class="btn btn-danger">Add to Cart</button>
                         </div>
@@ -90,7 +106,7 @@
                                 </figure>
                                 <h2 v-text="lesson.subject"></h2>
                                 <p>Location: {{lesson.location}}</p>
-                                <p>Price: {{lesson.price}}</p>
+                                <p>Price: <b>￡</b>{{lesson.price}}</p>
                                 <p>Quantity: {{cartQuantity(lesson.id)}}</p>
                                 <button v-on:click="removeFromCart(lesson)" class="btn btn-danger">Remove</button>
                             </div>

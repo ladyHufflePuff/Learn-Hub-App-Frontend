@@ -11,7 +11,9 @@ let app = new Vue({
         phone: '',
         nameError: false,
         phoneError: false,
-        modalShow: false
+        modalShow: false,
+        searchQuery: '',
+        searchResults: []
     },
     created:function(){
         fetch("http://localhost:8080/lessons").then( (res) =>{
@@ -40,6 +42,7 @@ let app = new Vue({
         },
         showCheckout(){
             this.showLesson = !this.showLesson;  
+            this.searchQuery = '';
         },
         cartQuantity(lessonId){
             let cartItem = this.cart.find(item => item.id === lessonId);
@@ -118,6 +121,19 @@ let app = new Vue({
             this.cart = [];  
             this.name = '';
             this.phone = '';  
+        },
+        async searchLessons(){
+            const res = await fetch(`http://localhost:8080/lessons/search?search=${encodeURIComponent(this.searchQuery)}`);
+            if (res.status == 200){
+                const results = await res.json();
+                this.searchResults = results;
+            }
+            else if (res.status == 205){
+                return app.lessons; 
+            }
+            else{
+                console.error("Failed to fetch search results, status code:", res.status);
+            }
         }
     },
     computed:{
@@ -142,7 +158,7 @@ let app = new Vue({
             return !this.nameError && !this.phoneError && this.name !=='' && this.phone !== '';
         },
         isShoppingCartDisabled() {
-            return this.showLesson && this.cartLessons.length === 0;
+            return this.showLesson && this.cart.length === 0;
         }
     }
 
