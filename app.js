@@ -17,7 +17,7 @@ let app = new Vue({
     },
     created:function(){
         // fetch lessons from backend
-        fetch("http://localhost:8080/lessons").then( (res) =>{
+        fetch("https://learn-hub-app-api.onrender.com/lessons").then( (res) =>{
             res.json().then(
                 (res) =>{
                     app.lessons = res;
@@ -54,7 +54,7 @@ let app = new Vue({
             if (lesson) {
                 lesson.space += spaceChange;
                 try {
-                    await fetch(`http://localhost:8080/lessons/${lesson._id}`, {
+                    await fetch(`https://learn-hub-app-api.onrender.com/lessons/${lesson._id}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ space: lesson.space })
@@ -126,7 +126,7 @@ let app = new Vue({
                     lessons: this.cart.map(item => ({ id: item.id, space: item.quantity })),
                     orderDate: new Date().toISOString().slice(0, 10) 
                 };
-                fetch("http://localhost:8080/orders", {
+                fetch("https://learn-hub-app-api.onrender.com/orders", {
                     method: "POST", 
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(order)
@@ -149,7 +149,7 @@ let app = new Vue({
         },
         // search for lesson based on user input
         async searchLessons(){
-            const res = await fetch(`http://localhost:8080/lessons/search?search=${encodeURIComponent(this.searchQuery)}`);
+            const res = await fetch(`https://learn-hub-app-api.onrender.com/lessons/search?search=${encodeURIComponent(this.searchQuery)}`);
             if (res.status == 200){
                 const results = await res.json();
                 this.searchResults = results;
