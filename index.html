@@ -9,12 +9,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
-    <title>Coursework</title>
+    <title>CST3144 Coursework</title>
     
 </head>
-<body style="background-color: #FFFFFF; font-family: 'Fredericka the Great', serif;" >
-    <div id="app"  >
-        <div class="d-flex justify-content-between align-items-center p-3" >
+<body style="background-color: #FFFFFF; font-family: 'Fredericka the Great', serif;">
+    <div id="app">
+        <!-- app header  -->
+        <div class="d-flex justify-content-between align-items-center p-3">
             <h1 style="font-size: 48px;">Learn Hub App</h1>
             <input class="form-control form-control-lg rounded-pill w-25" style="border: 2px solid black;" type="text" v-model="searchQuery" placeholder="Search lessons" @input="searchLessons" :disabled="!showLesson"/>
             <button class="btn btn-light d-flex align-items-center shadow-sm"  style="padding: 0.5rem 1rem; transition: all 0.3s ease;" v-on:click="showCheckout" :disabled="isShoppingCartDisabled">
@@ -26,8 +27,10 @@
             </button> 
         </div>
         
+        <!-- lesson page -->
         <div class="d-flex" v-if="showLesson">
-            <div >
+            <!-- sidebar with sorting options -->
+            <div>
                 <i class="fa fa-sort "style="font-size: 30px;" aria-hidden="true"@click="toggleSidebar" ></i>
                 <div v-if="!searchQuery" v-show="showSidebar" style= "transition: 0.5s ease;">
                     <h1>SORT By</h1>
@@ -65,6 +68,7 @@
             </div>
             
             <div class="container my-4">
+                <!-- unfiltered lesson display-->
                 <div v-if="!searchQuery" class="row   row-cols-md-4">
                     <div class="col" v-for="lesson in sortedLessons">
                         <div class="lesson" 
@@ -81,25 +85,33 @@
                     </div>
                 </div>
 
-                <div v-if="searchQuery" class="row   row-cols-md-4">
-                    <div class="col" v-for="lesson in searchResults" >
-                        <div class="lesson" 
-                    style="background-color: #353839; color: #FFFFFF; border-radius: 10px; padding: 20px; margin: 10px;">
-                            <figure>
-                                <img style="border-radius: 12px; border: 2px solid #ccc; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" v-bind:src="lesson.image" width="200" height="200" alt="Lesson Image">
-                            </figure>
-                            <h2 v-text="lesson.subject"></h2>
-                            <p>Location: {{lesson.location}}</p>
-                            <p>Price: <b>￡</b>{{lesson.price}} </p>
-                            <p>Spaces: {{lesson.space}}</p>
-                            <button v-on:click="addToCart(lesson)" :disabled="lesson.space === 0"  class="btn btn-danger">Add to Cart</button>
+                <!-- filtered search results display-->
+                <div v-if="searchQuery">
+                    <div v-if="searchResults.length > 0" class="row   row-cols-md-4">
+                        <div class="col" v-for="lesson in searchResults" >
+                            <div class="lesson" 
+                        style="background-color: #353839; color: #FFFFFF; border-radius: 10px; padding: 20px; margin: 10px;">
+                                <figure>
+                                    <img style="border-radius: 12px; border: 2px solid #ccc; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" v-bind:src="lesson.image" width="200" height="200" alt="Lesson Image">
+                                </figure>
+                                <h2 v-text="lesson.subject"></h2>
+                                <p>Location: {{lesson.location}}</p>
+                                <p>Price: <b>￡</b>{{lesson.price}} </p>
+                                <p>Spaces: {{lesson.space}}</p>
+                                <button v-on:click="addToCart(lesson)" :disabled="lesson.space === 0"  class="btn btn-danger">Add to Cart</button>
+                            </div>
                         </div>
+                    </div>
+                    <div v-else>
+                        <p>Lesson not found</p>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- shopping cart page-->
         <div class="d-flex justify-content-between align-items-start p-4"  v-else>
+            <!-- shopping cart section-->
             <div class="col-8 p-4 rounded" style="background-color: #f5f5f5;">
                 <h1>Shopping Cart</h1>
                 <div v-if="cartLessons.length > 0" class="container mt-3">
@@ -128,6 +140,7 @@
                 </div>
             </div>
 
+            <!-- checkout section-->
             <div class="col-3 p-4 rounded" style="background-color: #f5f5f5;" v-if="cartLessons.length > 0">
                 <h1>Checkout</h1>
                 <div class="d-flex flex-column w-75"  >
@@ -139,6 +152,7 @@
                 <button class="btn btn-primary mt-3" v-bind:disabled="!isFormValid" v-on:click="confirmOrder" >Checkout</button>
             </div>
 
+            <!-- display confirmation message-->
             <div v-if="modalShow" class="modal fade show" tabindex="-1" role="dialog" style="display: block;" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content">
@@ -155,6 +169,7 @@
         </div>    
     </div>
 
+    <!-- include Vue.js -->
     <script src="app.js"></script>     
 </body>
 </html>

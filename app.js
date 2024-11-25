@@ -16,6 +16,7 @@ let app = new Vue({
         searchResults: []
     },
     created:function(){
+        // fetch lessons from backend
         fetch("http://localhost:8080/lessons").then( (res) =>{
             res.json().then(
                 (res) =>{
@@ -23,26 +24,31 @@ let app = new Vue({
                 }
             )
         });
+        // load cart from localStorage
         storedCart = localStorage.getItem('cart');
         if (storedCart){
             this.cart = JSON.parse(storedCart);
         }
     },
+    // monitor changes to cart and update localstorage
     watch:{
         cart:{
-            deep: true,
+            deep: true, // ensure nested changes are monitored
             handler(newCart){
                 localStorage.setItem('cart', JSON.stringify(newCart))
             }
         }
     },
     methods:{
+        // toggle sidebar visibility
         toggleSidebar(){
             this.showSidebar = !this.showSidebar; 
         },
+        // update selected sorting attribute
         handleSort(attribute){
             this.selectedSort = [attribute];
         },
+        // update lesson spaces in backend
         async updateSpace(lessonId, spaceChange) {
             const lesson = this.lessons.find(l => l.id === lessonId);
             if (lesson) {
@@ -59,6 +65,7 @@ let app = new Vue({
                 }
             }
         },
+        // add lesson to cart
         async addToCart(lesson){
             let cartItem = this.cart.find(item => item.id === lesson.id);
             if(cartItem){
@@ -71,14 +78,17 @@ let app = new Vue({
                 await this.searchLessons();
             }
         },
+        // toggle lesson and shopping cart page
         showCheckout(){
             this.showLesson = !this.showLesson;  
             this.searchQuery = '';
         },
+        // get quantity of specific lesson in cart
         cartQuantity(lessonId){
             let cartItem = this.cart.find(item => item.id === lessonId);
             return cartItem ? cartItem.quantity : 0;
         },
+        // remove lesson from cart
         async removeFromCart(lesson){
             let cartItem = this.cart.find(item => item.id === lesson.id);
             if (cartItem) {
@@ -89,6 +99,7 @@ let app = new Vue({
             }
             await this.updateSpace(lesson.id, 1);        
         },
+        // validate name input
         validateName(){
             const nameRegex = /^[a-zA-Z\s]*$/;
             if (!nameRegex.test(this.name)) {
@@ -97,6 +108,7 @@ let app = new Vue({
               this.nameError = false;
             }
         },
+        // validate phone number input
         validatePhone(){
             const phoneRegex = /^[0-9]*$/;
             if (!phoneRegex.test(this.phone)) {
@@ -105,6 +117,7 @@ let app = new Vue({
               this.phoneError = false;
             }  
         },
+        // submit order to backend and display confirmation message
         confirmOrder(){
             if (this.isFormValid) {
                 const order ={
@@ -127,12 +140,14 @@ let app = new Vue({
                 });
               }
         },
+        // reset shopping cart page after order confirmation
         dismiss(){
             this.modalShow = false;
             this.cart = [];  
             this.name = '';
             this.phone = '';  
         },
+        // search for lesson based on user input
         async searchLessons(){
             const res = await fetch(`http://localhost:8080/lessons/search?search=${encodeURIComponent(this.searchQuery)}`);
             if (res.status == 200){
@@ -148,6 +163,7 @@ let app = new Vue({
         }
     },
     computed:{
+        // return lessons sorted by selected attribute and order
         sortedLessons(){
             if(this.selectedSort.length === 0){
                 return this.lessons;
@@ -159,15 +175,19 @@ let app = new Vue({
                 return 0;
             })
         },
+        // calculate total number of lessons in cart
         itemInCart(){
             return this.cart.reduce((total, item) => total + item.quantity, 0);
         },
+        // full details of lessons in cart
         cartLessons(){
             return this.lessons.filter(lesson => this.cart.some(item => item.id === lesson.id));
         },
+        // validate checkout information
         isFormValid(){
             return !this.nameError && !this.phoneError && this.name !=='' && this.phone !== '';
         },
+        // determine checkout button activity
         isShoppingCartDisabled() {
             return this.showLesson && this.cart.length === 0;
         }
