@@ -22,7 +22,19 @@ let app = new Vue({
                     app.lessons = res;
                 }
             )
-        })
+        });
+        storedCart = localStorage.getItem('cart');
+        if (storedCart){
+            this.cart = JSON.parse(storedCart);
+        }
+    },
+    watch:{
+        cart:{
+            deep: true,
+            handler(newCart){
+                localStorage.setItem('cart', JSON.stringify(newCart))
+            }
+        }
     },
     methods:{
         toggleSidebar(){
@@ -31,14 +43,33 @@ let app = new Vue({
         handleSort(attribute){
             this.selectedSort = [attribute];
         },
-        addToCart(lesson){
+        async updateSpace(lessonId, spaceChange) {
+            const lesson = this.lessons.find(l => l.id === lessonId);
+            if (lesson) {
+                lesson.space += spaceChange;
+                try {
+                    await fetch(`http://localhost:8080/lessons/${lesson._id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ space: lesson.space })
+                    });
+                } catch (error) {
+                    console.error(`Failed to update lesson ${lesson.subject}:`, error);
+                    lesson.space -= spaceChange; 
+                }
+            }
+        },
+        async addToCart(lesson){
             let cartItem = this.cart.find(item => item.id === lesson.id);
             if(cartItem){
                 cartItem.quantity += 1;
             }else{
                 this.cart.push({id: lesson.id, quantity: 1});
             }
-            lesson.space--;
+            await this.updateSpace(lesson.id, -1);
+            if (this.searchResults.some(searchResult => searchResult.id === lesson.id)) {
+                await this.searchLessons();
+            }
         },
         showCheckout(){
             this.showLesson = !this.showLesson;  
@@ -48,15 +79,15 @@ let app = new Vue({
             let cartItem = this.cart.find(item => item.id === lessonId);
             return cartItem ? cartItem.quantity : 0;
         },
-        removeFromCart(lesson){
+        async removeFromCart(lesson){
             let cartItem = this.cart.find(item => item.id === lesson.id);
             if (cartItem) {
                 cartItem.quantity -= 1; 
-                lesson.space++; 
                 if (cartItem.quantity === 0) {
                     this.cart = this.cart.filter(item => item.id !== lesson.id);
                 }
             }
+            await this.updateSpace(lesson.id, 1);        
         },
         validateName(){
             const nameRegex = /^[a-zA-Z\s]*$/;
@@ -89,27 +120,7 @@ let app = new Vue({
                 })
                 .then(response => {
                     if (response.ok) {
-                        console.log("Order submitted successfully");
                         this.modalShow = true; 
-                        this.cart.forEach(cartItem => {
-                            const lesson = this.lessons.find(lesson => lesson.id === cartItem.id);
-                            if (lesson) {
-                                fetch(`http://localhost:8080/lessons/${lesson._id}`, {
-                                    method: "PUT",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ space: lesson.space })
-                                })
-                                .then(updateResponse => {
-                                    if (!updateResponse.ok) {
-                                        throw new Error(`Failed to update lesson space for ${lesson._id}`);
-                                    }
-                                    console.log(`Lesson space for ${lesson.name} updated successfully`);
-                                })
-                                .catch(error => {
-                                    console.error("Error updating lesson space:", error);
-                                });
-                            }
-                        });
                     } else {
                         console.error("Failed to submit order");
                     }
